@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/roxanne.iml" filepath="$PROJECT_DIR$/roxanne.iml" />
+      <module fileurl="file://$PROJECT_DIR$/roxanne-api/roxanne-api.iml" filepath="$PROJECT_DIR$/roxanne-api/roxanne-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/roxanne-model/roxanne-model.iml" filepath="$PROJECT_DIR$/roxanne-model/roxanne-model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/roxanne-security/roxanne-security.iml" filepath="$PROJECT_DIR$/roxanne-security/roxanne-security.iml" />
+      <module fileurl="file://$PROJECT_DIR$/roxanne-starter/roxanne-starter.iml" filepath="$PROJECT_DIR$/roxanne-starter/roxanne-starter.iml" />
+    </modules>
+  </component>
+</project>

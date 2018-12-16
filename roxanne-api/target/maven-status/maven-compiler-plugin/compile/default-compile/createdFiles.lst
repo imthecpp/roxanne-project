@@ -1,0 +1,3 @@
+com\heroku\roxanne\controller\user\UserController.class
+com\heroku\roxanne\config\BeanConfig.class
+com\heroku\roxanne\controller\TestController.class
