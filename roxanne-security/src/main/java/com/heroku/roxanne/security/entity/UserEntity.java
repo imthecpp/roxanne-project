@@ -2,12 +2,16 @@ package com.heroku.roxanne.security.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 @Data
@@ -26,8 +30,15 @@ public class UserEntity implements UserDetails {
     @Size(min = 2)
     private String lastName;
 
+    @CreatedDate
+    private Date creationDate;
+
+    @LastModifiedDate
+    private Date lastModified;
+
     @Column(nullable = false)
-    private String Email;
+    @Email
+    private String email;
 
     @Transient
     private String password;
