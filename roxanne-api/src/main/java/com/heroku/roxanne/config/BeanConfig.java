@@ -13,7 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @ComponentScan(basePackages = {"com.heroku.roxanne"})
-//s@EnableJpaRepositories(basePackages = {"com.heroku.roxanne"})
+//@EnableJpaRepositories(basePackages = {"com.heroku.roxanne"})
 @EnableSwagger2
 @Slf4j
 public class BeanConfig {

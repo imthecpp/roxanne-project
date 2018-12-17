@@ -2,16 +2,12 @@ package com.java.roxanne.controller.user;
 
 import com.heroku.roxanne.config.BeanConfig;
 import com.heroku.roxanne.controller.TestController;
-import com.heroku.roxanne.controller.user.UserController;
-import com.heroku.roxanne.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;

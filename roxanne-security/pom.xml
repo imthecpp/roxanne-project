@@ -10,10 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>roxanne-security</artifactId>
-    <!--<dependencies>-->
+    <dependencies>
         <!--<dependency>-->
             <!--<groupId>org.springframework.boot</groupId>-->
             <!--<artifactId>spring-boot-starter-security</artifactId>-->
         <!--</dependency>-->
-    <!--</dependencies>-->
+    </dependencies>
 </project>
