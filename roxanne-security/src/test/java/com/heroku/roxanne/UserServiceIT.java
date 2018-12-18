@@ -3,7 +3,9 @@ package com.heroku.roxanne;
 import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.exception.UserValidationException;
 import com.heroku.roxanne.security.exception.UserAlreadyExistException;
+import com.heroku.roxanne.security.model.UserIdentity;
 import com.heroku.roxanne.security.service.api.UserService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -25,13 +29,14 @@ public class UserServiceIT {
     UserService userService;
 
     @Test
-    public void getOneByIdTest(){
-
+    public void getOneByIdTest() throws UserNotExistException{
+        UserIdentity userIdentity = userService.findById(1L);
+        Assert.assertEquals(1, userIdentity.getId().longValue());
     }
 
-    @Test
-    public void getOneByIdNotExistTest(){
-
+    @Test(expected = UserNotExistException.class)
+    public void getOneByIdNotExistTest() throws UserNotExistException{
+        userService.findById(1L);
     }
 
 
@@ -57,12 +62,14 @@ public class UserServiceIT {
 
     @Test
     public void getAllUsersTest(){
-
+        List<UserIdentity> userIdentity = userService.findAll();
+        Assert.assertFalse(userIdentity.isEmpty());
     }
 
     @Test
     public void getAllUsersEmptyNull(){
-
+        List<UserIdentity> userIdentity = userService.findAll();
+        Assert.assertTrue(userIdentity.isEmpty());
     }
 
 
