@@ -4,6 +4,7 @@ import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.exception.UserValidationException;
 import com.heroku.roxanne.security.exception.UserAlreadyExistException;
 import com.heroku.roxanne.security.model.UserIdentity;
+import com.heroku.roxanne.security.model.api.UserIdentityApiModel;
 import com.heroku.roxanne.security.service.api.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,9 +12,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
 
 import java.util.List;
 
@@ -26,7 +32,7 @@ import java.util.List;
 public class UserServiceIT {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Test
     public void getOneByIdTest() throws UserNotExistException{
@@ -36,18 +42,20 @@ public class UserServiceIT {
 
     @Test(expected = UserNotExistException.class)
     public void getOneByIdNotExistTest() throws UserNotExistException{
-        userService.findById(1L);
+        userService.findById(2L);
     }
 
 
     @Test
-    public void getOneByUserNameTest(){
+    public void getOneByUserNameTest() throws UsernameNotFoundException {
+        UserIdentity userIdentity = userService.findByUsername("admin");
+        Assert.assertEquals("admin", userIdentity.getUsername());
 
     }
 
-    @Test
-    public void getOneByUserNameNotExistTest(){
-
+    @Test(expected = UsernameNotFoundException.class)
+    public void getOneByUserNameNotFoundTest() throws UsernameNotFoundException {
+        userService.findByUsername("adminNotFound");
     }
 
     @Test
@@ -75,11 +83,14 @@ public class UserServiceIT {
 
     @Test
     public void getAllUsersPageableTest(){
-
+        Pageable pageable = new PageRequest(1, 1, Sort.Direction.ASC);
+        //service
+        Assert.assertEquals(1, pageable.getPageSize());
     }
 
     @Test
     public void createUserTest(){
+        UserIdentityApiModel userIdentityApiModel = new UserIdentityApiModel();
 
     }
 
@@ -104,12 +115,13 @@ public class UserServiceIT {
     }
 
     @Test
-    public void deleteUserTest(){
-
+    public void deleteUserTest()throws UserNotExistException {
+        UserIdentity userIdentity = userService.delete(1L);
+        Assert.assertEquals(1, userIdentity.getId().longValue());
     }
 
     @Test(expected = UserNotExistException.class)
-    public void deleteUserNotExistException(){
-
+    public void deleteUserNotExistException() throws UserNotExistException {
+        userService.delete(9999L);
     }
 }

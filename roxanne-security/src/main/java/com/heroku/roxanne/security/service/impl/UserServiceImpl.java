@@ -10,10 +10,9 @@ import com.heroku.roxanne.security.repository.UserRepository;
 import com.heroku.roxanne.security.service.api.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
-import javax.validation.constraints.AssertFalse;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -46,32 +45,54 @@ public class UserServiceImpl implements UserService {
     public UserIdentity findById(final Long id) throws UserNotExistException {
         log.info("find user with id: {} ", id);
         UserEntity userEntity = new UserEntity();
-        if (id != null){
+        if (id != null) {
             userEntity = userRepository.findById(id)
                     .orElseThrow(() ->
                             new UserNotExistException("user with id: " + id + " not exist")
                     );
         }
+        log.info("founded user with id: {} ", userEntity.getId());
         return map(userEntity);
     }
 
     @Override
-    public UserIdentity findByUsername(final String username) throws UserNotExistException {
+    public UserIdentity findByUsername(final String username) throws UsernameNotFoundException {
+        log.info("find by username: {} ", username);
+        UserEntity userEntity = Optional.of(username)
+                .flatMap(usn -> userRepository.findByUsername(usn))
+                .orElseThrow(() -> new UsernameNotFoundException("username: " + username + "not found"));
+        return map(userEntity);
+    }
+
+    @Override
+    public UserIdentity update(final Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException {
         return null;
     }
 
     @Override
-    public UserEntity update(Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException {
+    public UserIdentity create(final UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
         return null;
     }
 
     @Override
-    public UserEntity create(UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
-        return null;
-    }
+    public Optional<UserIdentity> delete(final Long id) throws UserNotExistException {
+        log.info("deleting user with id: {} ", id);
 
-    @Override
-    public UserEntity delete(Long id) throws UserNotExistException {
+        UserEntity userEntity = Optional.of(id)
+                .flatMap(user -> userRepository.findById(user))
+                .orElseThrow(() -> new UserNotExistException("user not exist"));
+
+        Optional.of(userEntity)
+                .ifPresent(user->{
+                    userRepository.delete(user);
+                    //return map(user);
+                });
+
+//        userEntity.ifPresent(user -> {
+//            userRepository.delete(user);
+//        });
+        Optional.of(userEntity).orElse(userEntity);
+
         return null;
     }
 

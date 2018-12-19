@@ -5,16 +5,18 @@ import com.heroku.roxanne.security.exception.UserAlreadyExistException;
 import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.model.UserIdentity;
 import com.heroku.roxanne.security.model.api.UserIdentityApiModel;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
 
     List<UserIdentity> findAll();
-    UserIdentity findById(final Long id) throws UserNotExistException;
-    UserIdentity findByUsername(final String username) throws UserNotExistException;
-    UserEntity update(final Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException;
-    UserEntity create(UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException;
-    UserEntity delete(final Long id) throws UserNotExistException;
+    UserIdentity findById(Long id) throws UserNotExistException;
+    UserIdentity findByUsername(String username) throws UsernameNotFoundException;
+    UserIdentity update(Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException;
+    UserIdentity create(UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException;
+    Optional<UserIdentity> delete(Long id) throws UserNotExistException;
 }
