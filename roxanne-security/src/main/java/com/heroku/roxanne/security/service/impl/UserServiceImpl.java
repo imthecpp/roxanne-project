@@ -9,6 +9,7 @@ import com.heroku.roxanne.security.model.api.UserIdentityApiModel;
 import com.heroku.roxanne.security.repository.UserRepository;
 import com.heroku.roxanne.security.service.api.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
         if (id != null) {
             userEntity = userRepository.findById(id)
                     .orElseThrow(() ->
-                            new UserNotExistException("user with id: " + id + " not exist")
+                            new UserNotExistException("user not exist")
                     );
         }
         log.info("founded user with id: {} ", userEntity.getId());
@@ -60,18 +61,33 @@ public class UserServiceImpl implements UserService {
         log.info("find by username: {} ", username);
         UserEntity userEntity = Optional.of(username)
                 .flatMap(usn -> userRepository.findByUsername(usn))
-                .orElseThrow(() -> new UsernameNotFoundException("username: " + username + "not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("username not found"));
         return map(userEntity);
     }
 
     @Override
     public UserIdentity update(final Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException {
+
+        if (id != null){
+
+        }
         return null;
     }
 
     @Override
-    public UserIdentity create(final UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
-        return null;
+    public Optional<UserIdentity> create(final UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
+        log.info("creating user");
+
+        UserIdentity userIdentity = Optional.of(userIdentityApiModel)
+                .map(user -> {
+                    UserEntity userEntity = new UserEntity();
+                    BeanUtils.copyProperties(user, userEntity, "passwordHash");
+                    userRepository.save(userEntity);
+                    log.info("user with id: {} has been created", userEntity.getId());
+                    return map(userEntity);
+                }).orElseThrow(()-> new UserAlreadyExistException("user already exist"));
+
+        return Optional.of(userIdentity);
     }
 
     @Override

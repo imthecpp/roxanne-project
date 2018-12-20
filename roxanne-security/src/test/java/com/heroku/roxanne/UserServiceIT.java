@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RunWith(SpringRunner.class)
@@ -89,8 +90,14 @@ public class UserServiceIT {
     }
 
     @Test
-    public void createUserTest(){
+    public void createUserTest() throws UserAlreadyExistException{
         UserIdentityApiModel userIdentityApiModel = new UserIdentityApiModel();
+        userIdentityApiModel.setAccountNonExpired(true);
+        userIdentityApiModel.setAccountNonLocked(true);
+        userIdentityApiModel.setCredentialsNonExpired(true);
+        userIdentityApiModel.setEnabled(true);
+
+        userService.create(userIdentityApiModel);
 
     }
 
@@ -116,8 +123,8 @@ public class UserServiceIT {
 
     @Test
     public void deleteUserTest()throws UserNotExistException {
-        UserIdentity userIdentity = userService.delete(1L);
-        Assert.assertEquals(1, userIdentity.getId().longValue());
+        Optional<UserIdentity> userIdentity = userService.delete(1L);
+        Assert.assertEquals(1, userIdentity.get().getId().longValue());
     }
 
     @Test(expected = UserNotExistException.class)
