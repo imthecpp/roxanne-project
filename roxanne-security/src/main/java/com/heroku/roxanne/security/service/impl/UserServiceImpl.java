@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -33,13 +34,20 @@ public class UserServiceImpl implements UserService {
         log.info("find all users");
         List<UserEntity> userEntities = userRepository.findAll();
 
-        if (userEntities != null){
-            log.info("returning list of users");
-            return map(userEntities);
-        } else {
-            log.info("there is nothing to return");
-            return null;
-        }
+        return Optional.of(userRepository.findAll())
+                .map(uList -> {
+                    log.info("returning list of users");
+                    return map(uList);
+                })
+                .orElse(new ArrayList<UserIdentity>());
+
+//        if (userEntities != null) {
+//            log.info("returning list of users");
+//            return map(userEntities);
+//        } else {
+//            log.info("there is nothing to return");
+//            return null;
+//        }
     }
 
     @Override
@@ -68,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserIdentity update(final Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException {
 
-        if (id != null){
+        if (id != null) {
 
         }
         return null;
@@ -78,45 +86,61 @@ public class UserServiceImpl implements UserService {
     public Optional<UserIdentity> create(final UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
         log.info("creating user");
 
-        UserIdentity userIdentity = Optional.of(userIdentityApiModel)
-                .map(user -> {
-                    UserEntity userEntity = new UserEntity();
-                    BeanUtils.copyProperties(user, userEntity, "passwordHash");
-                    userRepository.save(userEntity);
-                    log.info("user with id: {} has been created", userEntity.getId());
-                    return map(userEntity);
-                }).orElseThrow(()-> new UserAlreadyExistException("user already exist"));
+        //field validation in controller layer then:
+        //check if user exist by username and email
+        //if not - create
+        //if exist - throw exception
+       UserEntity entity =  userRepository.findByUsername(userIdentityApiModel.getUsername()).get();
 
-        return Optional.of(userIdentity);
+        Optional<UserIdentity> userIdentity = Optional.ofNullable(userIdentityApiModel)
+                .map(userApi -> userRepository.findByUsername(userApi.getUsername())
+                .filter(u -> !u.getUsername().equals(userApi.getUsername()))
+                .map(u-> {
+                    UserEntity userEntity = new UserEntity();
+                    BeanUtils.copyProperties(u, userEntity, "passwordHash");
+                    userRepository.save(userEntity);
+                    return map(userEntity);
+                })).orElseThrow(() -> new UserAlreadyExistException("user already exist"));
+
+//        UserIdentity userIdentity = Optional.of(userIdentityApiModel)
+//                .map(user -> userRepository.findByUsername(userIdentityApiModel.getUsername()))
+//                .map(user -> {
+//                    UserEntity userEntity = new UserEntity();
+//                    BeanUtils.copyProperties(user, userEntity, "passwordHash");
+//                    userRepository.save(userEntity);
+//                    log.info("user with id: {} has been created", userEntity.getId());
+//                    return map(userEntity);
+//                }).orElseThrow(() -> new UserAlreadyExistException("user already exist"));
+
+        return userIdentity;
     }
 
     @Override
-    public Optional<UserIdentity> delete(final Long id) throws UserNotExistException {
-        log.info("deleting user with id: {} ", id);
+    public UserIdentity delete(final Long id) throws UserNotExistException {
+        log.info("deleting user");
 
-        UserEntity userEntity = Optional.of(id)
-                .flatMap(user -> userRepository.findById(user))
-                .orElseThrow(() -> new UserNotExistException("user not exist"));
+        //flat map zwraca obiekt opakowany jako optional lub pusty optional
+        //map, zwraca obiekt bez kontenera optional
+        //ofNullable pomija defaultowe wyjątki
+        UserEntity userEntity = Optional.ofNullable(id)
+                .flatMap(userId -> {
+                    log.info("looking for entity with id: {} ", userId);
+                    return userRepository.findById(userId);
+                }).orElseThrow(() -> new UserNotExistException("User not found"));
 
-        Optional.of(userEntity)
-                .ifPresent(user->{
+        return Optional.of(userEntity)
+                .map(user -> {
                     userRepository.delete(user);
-                    //return map(user);
-                });
-
-//        userEntity.ifPresent(user -> {
-//            userRepository.delete(user);
-//        });
-        Optional.of(userEntity).orElse(userEntity);
-
-        return null;
+                    log.info("user with id: {} deleted", user.getId());
+                    return map(user);
+                }).orElseThrow(() -> new UserNotExistException("User not exist"));
     }
 
-    private List<UserIdentity> map(Collection<UserEntity> userEntity){
+    private List<UserIdentity> map(Collection<UserEntity> userEntity) {
         return orikaMapper.getMapperFacade().mapAsList(userEntity, UserIdentity.class);
     }
 
-    private UserIdentity map(UserEntity userEntity){
+    private UserIdentity map(UserEntity userEntity) {
         return orikaMapper.getMapperFacade().map(userEntity, UserIdentity.class);
     }
 

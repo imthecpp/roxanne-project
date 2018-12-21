@@ -1,5 +1,6 @@
 package com.heroku.roxanne;
 
+import com.heroku.roxanne.security.exception.EmptyUserException;
 import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.exception.UserValidationException;
 import com.heroku.roxanne.security.exception.UserAlreadyExistException;
@@ -70,13 +71,13 @@ public class UserServiceIT {
     }
 
     @Test
-    public void getAllUsersTest(){
+    public void getAllUsersTest() throws EmptyUserException {
         List<UserIdentity> userIdentity = userService.findAll();
         Assert.assertFalse(userIdentity.isEmpty());
     }
 
     @Test
-    public void getAllUsersEmptyNull(){
+    public void getAllUsersEmptyNull() throws EmptyUserException{
         List<UserIdentity> userIdentity = userService.findAll();
         Assert.assertTrue(userIdentity.isEmpty());
     }
@@ -96,8 +97,14 @@ public class UserServiceIT {
         userIdentityApiModel.setAccountNonLocked(true);
         userIdentityApiModel.setCredentialsNonExpired(true);
         userIdentityApiModel.setEnabled(true);
+        userIdentityApiModel.setPassword("admin");
+        userIdentityApiModel.setUsername("admin2");
+        userIdentityApiModel.setEmail("rxn@projext.com");
+        userIdentityApiModel.setFirstName("admin");
+        userIdentityApiModel.setLastName("admin");
 
-        userService.create(userIdentityApiModel);
+        Optional<UserIdentity> userIdentity = userService.create(userIdentityApiModel);
+        Assert.assertEquals("admin", userIdentity.get().getUsername());
 
     }
 
@@ -123,12 +130,18 @@ public class UserServiceIT {
 
     @Test
     public void deleteUserTest()throws UserNotExistException {
-        Optional<UserIdentity> userIdentity = userService.delete(1L);
-        Assert.assertEquals(1, userIdentity.get().getId().longValue());
+        UserIdentity userIdentity = userService.delete(1L);
+        Assert.assertEquals(1, userIdentity.getId().longValue());
     }
 
     @Test(expected = UserNotExistException.class)
     public void deleteUserNotExistException() throws UserNotExistException {
         userService.delete(9999L);
+    }
+
+    @Test(expected = UserNotExistException.class)
+    public void deleteUserNullTest() throws UserNotExistException{
+        userService.delete(null);
+
     }
 }
