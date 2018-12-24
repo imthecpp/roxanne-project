@@ -24,9 +24,38 @@
     </dependencies>
 
 
+
+
     <!--<profiles>-->
         <!--<profile>-->
+            <!--<id>dev</id>-->
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
             <!--<build>-->
+                <!--<plugins>-->
+                    <!--<plugin>-->
+                        <!--<groupId>org.springframework.boot</groupId>-->
+                        <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+                        <!--<version>2.1.1.RELEASE</version>-->
+                        <!--<configuration>-->
+                            <!--&lt;!&ndash;<profiles>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<profile>dawid</profile>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</profiles>&ndash;&gt;-->
+                            <!--<mainClass>com.heroku.roxanne.RoxanneProjectStarter</mainClass>-->
+                            <!--<layout>ZIP</layout>-->
+                            <!--<skip>false</skip>-->
+                            <!--<jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>-->
+                        <!--</configuration>-->
+                        <!--<executions>-->
+                            <!--<execution>-->
+                                <!--<goals>-->
+                                    <!--<goal>repackage</goal>-->
+                                <!--</goals>-->
+                            <!--</execution>-->
+                        <!--</executions>-->
+                    <!--</plugin>-->
+                <!--</plugins>-->
                 <!--<resources>-->
                     <!--<resource>-->
                         <!--<directory>src/main/resources</directory>-->
@@ -34,12 +63,10 @@
                     <!--</resource>-->
                 <!--</resources>-->
             <!--</build>-->
-            <!--<id>dawid</id>-->
-            <!--<activation>-->
-                <!--<activeByDefault>true</activeByDefault>-->
-            <!--</activation>-->
+
         <!--</profile>-->
     <!--</profiles>-->
+
 
     <build>
         <resources>
@@ -57,10 +84,10 @@
                     <profiles>
                         <profile>dawid</profile>
                     </profiles>
-
                     <mainClass>com.heroku.roxanne.RoxanneProjectStarter</mainClass>
                     <layout>ZIP</layout>
                     <skip>false</skip>
+                    <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
                 </configuration>
                 <executions>
                     <execution>
@@ -70,6 +97,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>show-profiles</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>all-profiles</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

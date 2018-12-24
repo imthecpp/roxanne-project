@@ -70,7 +70,7 @@ public class UserServiceIT {
     }
 
     @Test
-    public void getAllUsersTest() {
+    public void getAllUsersTest()  {
         List<UserIdentity> userIdentity = userService.findAll();
         Assert.assertFalse(userIdentity.isEmpty());
     }

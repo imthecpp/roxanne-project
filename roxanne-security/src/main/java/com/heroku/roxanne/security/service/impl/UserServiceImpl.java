@@ -32,14 +32,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserIdentity> findAll() {
         log.info("find all users");
-        List<UserEntity> userEntities = userRepository.findAll();
+        //List<UserIdentity> userEntities = userRepository.findAll();
 
         return Optional.of(userRepository.findAll())
                 .map(uList -> {
                     log.info("returning list of users");
                     return map(uList);
-                })
-                .orElse(new ArrayList<UserIdentity>());
+                }).get();
+
+
 
 //        if (userEntities != null) {
 //            log.info("returning list of users");
