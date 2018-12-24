@@ -23,13 +23,41 @@
         </dependency>
     </dependencies>
 
+
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<build>-->
+                <!--<resources>-->
+                    <!--<resource>-->
+                        <!--<directory>src/main/resources</directory>-->
+                        <!--<filtering>true</filtering>-->
+                    <!--</resource>-->
+                <!--</resources>-->
+            <!--</build>-->
+            <!--<id>dawid</id>-->
+            <!--<activation>-->
+                <!--<activeByDefault>true</activeByDefault>-->
+            <!--</activation>-->
+        <!--</profile>-->
+    <!--</profiles>-->
+
     <build>
+        <resources>
+            <resource>
+                <directory>config</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.1.1.RELEASE</version>
                 <configuration>
+                    <profiles>
+                        <profile>dawid</profile>
+                    </profiles>
+
                     <mainClass>com.heroku.roxanne.RoxanneProjectStarter</mainClass>
                     <layout>ZIP</layout>
                     <skip>false</skip>

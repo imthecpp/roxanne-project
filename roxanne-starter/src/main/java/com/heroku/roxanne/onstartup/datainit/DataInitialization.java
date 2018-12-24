@@ -14,8 +14,8 @@ public class DataInitialization implements ApplicationListener<ContextRefreshedE
 
 //    @Autowired
 //    UserRepository userRepository;
-@Autowired
-PasswordEncoder encoder;
+//@Autowired
+//PasswordEncoder encoder;
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
       log.info("------------moj event------------");
@@ -31,7 +31,7 @@ PasswordEncoder encoder;
         admin.setEnabled(Boolean.TRUE);
         admin.setFirstName("admin");
         admin.setLastName("admin");
-        admin.setPasswordHash(encoder.encode("admin"));//endocer
+        //admin.setPasswordHash(encoder.encode("admin"));//endocer
         admin.setEmail("roxanne@project-dev.com");
 
 

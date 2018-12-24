@@ -1,6 +1,5 @@
 package com.heroku.roxanne;
 
-import com.heroku.roxanne.security.exception.EmptyUserException;
 import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.exception.UserValidationException;
 import com.heroku.roxanne.security.exception.UserAlreadyExistException;
@@ -71,13 +70,13 @@ public class UserServiceIT {
     }
 
     @Test
-    public void getAllUsersTest() throws EmptyUserException {
+    public void getAllUsersTest() {
         List<UserIdentity> userIdentity = userService.findAll();
         Assert.assertFalse(userIdentity.isEmpty());
     }
 
     @Test
-    public void getAllUsersEmptyNull() throws EmptyUserException{
+    public void getAllUsersEmptyNull() {
         List<UserIdentity> userIdentity = userService.findAll();
         Assert.assertTrue(userIdentity.isEmpty());
     }
