@@ -5,6 +5,7 @@ import com.heroku.roxanne.security.exception.UserAlreadyExistException;
 import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.mapper.OrikaMapper;
 import com.heroku.roxanne.security.model.UserIdentity;
+import com.heroku.roxanne.security.model.api.UserIdentityApiModel;
 import com.heroku.roxanne.security.repository.UserRepository;
 import com.heroku.roxanne.security.service.api.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -77,9 +78,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserIdentity update(final Long id, UserEntity userEntity) throws UserNotExistException {
+    public UserIdentity update(final Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException {
 
-        if (id == null || userEntity == null) {
+        if (id == null || userIdentityApiModel == null) {
             log.warn("can't update user");
             return null;
         }
@@ -87,17 +88,17 @@ public class UserServiceImpl implements UserService {
         UserEntity entity = userRepository.findById(id).orElseThrow(() -> new UserNotExistException(""));
 
         if (entity.getId() != null){
-            Optional.ofNullable(userEntity.getEmail())
+            Optional.ofNullable(userIdentityApiModel.getEmail())
                     .ifPresent(entity::setEmail);
-            Optional.ofNullable(userEntity.getAuthorities())
-                    .ifPresent(entity::setAuthorities);
-            Optional.ofNullable(userEntity.getFirstName())
+//            Optional.ofNullable(userIdentityApiModel.getAuthorities())
+//                    .ifPresent(entity::setAuthorities);
+            Optional.ofNullable(userIdentityApiModel.getFirstName())
                     .ifPresent(entity::setFirstName);
-            Optional.ofNullable(userEntity.getMiddleName())
+            Optional.ofNullable(userIdentityApiModel.getMiddleName())
                     .ifPresent(entity::setMiddleName);
-            Optional.ofNullable(userEntity.getLastName())
+            Optional.ofNullable(userIdentityApiModel.getLastName())
                     .ifPresent(entity::setLastName);
-            Optional.ofNullable(userEntity.getUsername())
+            Optional.ofNullable(userIdentityApiModel.getUsername())
                     .ifPresent(entity::setUsername);
             userRepository.save(entity);
             log.info("user with id: {} updated", entity.getId());
@@ -108,23 +109,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserIdentity create(final UserEntity userEntity) throws UserAlreadyExistException {
+    public UserIdentity create(final UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
         log.info("creating user");
 
         //field validation in controller layer then:
         //check if user exist by username and email
         //if not - create and send email
         //if exist - throw exception
-        UserEntity entity = userRepository.findByUsernameAndEmail(userEntity.getUsername(), userEntity.getEmail());
+        UserEntity entity = userRepository.findByUsernameOrEmail(userIdentityApiModel.getUsername(), userIdentityApiModel.getEmail());
 
         if (entity != null) {
             log.warn("User with name: {} already exist", entity.getUsername());
             throw new UserAlreadyExistException("User already exist");
         }
-
-        userRepository.save(userEntity);
-        log.info("saved user with id: {} ", userEntity.getId());
-        return map(userEntity);
+        entity = userRepository.save(map(userIdentityApiModel));
+        log.info("saved user with id: {} ", entity.getId());
+        return map(entity);
     }
 
     @Override
@@ -152,6 +152,10 @@ public class UserServiceImpl implements UserService {
 
     private UserIdentity map(UserEntity userEntity) {
         return orikaMapper.getMapperFacade().map(userEntity, UserIdentity.class);
+    }
+
+    private UserEntity map(UserIdentityApiModel apiModel) {
+        return orikaMapper.getMapperFacade().map(apiModel, UserEntity.class);
     }
 
 }

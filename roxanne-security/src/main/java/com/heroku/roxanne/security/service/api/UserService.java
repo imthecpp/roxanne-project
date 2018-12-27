@@ -16,7 +16,7 @@ public interface UserService {
     List<UserIdentity> findAll();
     UserIdentity findById(Long id) throws UserNotExistException;
     UserIdentity findByUsername(String username) throws UsernameNotFoundException;
-    UserIdentity update(Long id, UserEntity userEntity) throws UserNotExistException;
-    UserIdentity create(UserEntity userEntity) throws UserAlreadyExistException;
+    UserIdentity update(Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException;
+    UserIdentity create(UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException;
     UserIdentity delete(Long id) throws UserNotExistException;
 }

@@ -2,6 +2,7 @@ package com.heroku.roxanne.security.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class RoleEntity implements GrantedAuthority {
 
