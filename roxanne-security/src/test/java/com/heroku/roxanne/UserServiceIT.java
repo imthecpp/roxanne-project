@@ -1,10 +1,10 @@
 package com.heroku.roxanne;
 
+import com.heroku.roxanne.security.entity.UserEntity;
 import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.exception.UserValidationException;
 import com.heroku.roxanne.security.exception.UserAlreadyExistException;
 import com.heroku.roxanne.security.model.UserIdentity;
-import com.heroku.roxanne.security.model.api.UserIdentityApiModel;
 import com.heroku.roxanne.security.service.api.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RunWith(SpringRunner.class)
@@ -91,7 +90,7 @@ public class UserServiceIT {
 
     @Test
     public void createUserTest() throws UserAlreadyExistException{
-        UserIdentityApiModel userIdentityApiModel = new UserIdentityApiModel();
+        UserEntity userIdentityApiModel = new UserEntity();
         userIdentityApiModel.setAccountNonExpired(true);
         userIdentityApiModel.setAccountNonLocked(true);
         userIdentityApiModel.setCredentialsNonExpired(true);
@@ -102,28 +101,58 @@ public class UserServiceIT {
         userIdentityApiModel.setFirstName("admin");
         userIdentityApiModel.setLastName("admin");
 
-        Optional<UserIdentity> userIdentity = userService.create(userIdentityApiModel);
-        Assert.assertEquals("admin", userIdentity.get().getUsername());
+        UserIdentity userIdentity = userService.create(userIdentityApiModel);
+        Assert.assertEquals("admin", userIdentity.getUsername());
 
     }
 
     @Test(expected = UserAlreadyExistException.class)
-    public void userAlreadyExistExceptionTest(){
+    public void userAlreadyExistExceptionTest() throws UserAlreadyExistException {
+        UserEntity userIdentityApiModel = new UserEntity();
+        userIdentityApiModel.setAccountNonExpired(true);
+        userIdentityApiModel.setAccountNonLocked(true);
+        userIdentityApiModel.setCredentialsNonExpired(true);
+        userIdentityApiModel.setEnabled(true);
+        userIdentityApiModel.setPassword("admin");
+        userIdentityApiModel.setUsername("admin2");
+        userIdentityApiModel.setEmail("rxn@projext.com");
+        userIdentityApiModel.setFirstName("admin");
+        userIdentityApiModel.setLastName("admin");
+
+        UserIdentity userIdentity = userService.create(userIdentityApiModel);
 
     }
 
-    @Test(expected = UserValidationException.class)
-    public void createUserValidationExceptionTest(){
+    @Test(expected = UserAlreadyExistException.class)
+    public void createUserValidationExceptionTest() throws UserAlreadyExistException{
+        UserEntity userIdentityApiModel = new UserEntity();
+        userIdentityApiModel.setAccountNonExpired(true);
+        userIdentityApiModel.setAccountNonLocked(true);
+        userIdentityApiModel.setCredentialsNonExpired(true);
+        userIdentityApiModel.setEnabled(true);
+        userIdentityApiModel.setPassword("admin");
+        userIdentityApiModel.setUsername("admin2");
+        userIdentityApiModel.setEmail("rxn@projext.com");
+        userIdentityApiModel.setFirstName("admin");
+        userIdentityApiModel.setLastName("admin");
+
+        UserIdentity userIdentity = userService.create(userIdentityApiModel);
 
     }
     @Test
-    public void updateUserTest(){
+    public void updateUserTest() throws UserNotExistException{
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername("updated");
+        userService.update(4L, userEntity);
 
     }
 
 
-    @Test(expected = UserValidationException.class)
-    public void updateValidationException(){
+    @Test(expected = UserNotExistException.class)
+    public void updateNotExistException() throws UserNotExistException{
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername("updated");
+        userService.update(444L, userEntity);
 
     }
 
@@ -138,9 +167,4 @@ public class UserServiceIT {
         userService.delete(9999L);
     }
 
-    @Test(expected = UserNotExistException.class)
-    public void deleteUserNullTest() throws UserNotExistException{
-        userService.delete(null);
-
-    }
 }
