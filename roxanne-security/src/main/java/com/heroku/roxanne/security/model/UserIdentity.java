@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,21 +15,26 @@ import java.util.Map;
 @AllArgsConstructor
 public class UserIdentity {
     protected Long id;
-
+    @Size(min = 3, max = 30)
     protected String username;
-
+    @Max(50)
     protected String firstName;
-
+    @Max(50)
     protected String middleName;
-
+    @Max(50)
     protected String lastName;
-
+    @Max(50)
+    @Email
+    @NotBlank
     protected String email;
 
     @JsonIgnore
+    @NotBlank
     protected String passwordHash;
 
     @JsonIgnore
+    @NotBlank
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")
     protected String password;
 
     protected boolean isAccountNonExpired = true;

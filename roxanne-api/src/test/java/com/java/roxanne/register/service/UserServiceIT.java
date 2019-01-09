@@ -1,12 +1,10 @@
-package com.heroku.roxanne;
+package com.java.roxanne.register.service;
 
-import com.heroku.roxanne.security.entity.RoleEntity;
 import com.heroku.roxanne.security.entity.UserEntity;
-import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.exception.UserAlreadyExistException;
+import com.heroku.roxanne.security.exception.UserNotExistException;
 import com.heroku.roxanne.security.model.UserIdentity;
 import com.heroku.roxanne.security.model.api.UserIdentityApiModel;
-import com.heroku.roxanne.security.repository.RoleRepository;
 import com.heroku.roxanne.security.repository.UserRepository;
 import com.heroku.roxanne.security.service.api.UserService;
 import org.junit.After;
@@ -21,7 +19,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 
 import java.util.List;
 
@@ -38,9 +35,6 @@ public class UserServiceIT {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
 
     private UserEntity userEntity;
 

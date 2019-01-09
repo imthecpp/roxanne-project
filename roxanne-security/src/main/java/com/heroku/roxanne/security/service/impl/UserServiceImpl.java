@@ -12,9 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OrikaMapper orikaMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserIdentity> findAll() {
@@ -78,6 +84,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    @Modifying
     public UserIdentity update(final Long id, UserIdentityApiModel userIdentityApiModel) throws UserNotExistException {
 
         if (id == null || userIdentityApiModel == null) {
@@ -109,6 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserIdentity create(final UserIdentityApiModel userIdentityApiModel) throws UserAlreadyExistException {
         log.info("creating user");
 
@@ -122,12 +131,17 @@ public class UserServiceImpl implements UserService {
             log.warn("User with name: {} already exist", entity.getUsername());
             throw new UserAlreadyExistException("User already exist");
         }
-        entity = userRepository.save(map(userIdentityApiModel));
+        UserEntity toRegister = new UserEntity();
+        userIdentityApiModel.setPasswordHash(passwordEncoder.encode(userIdentityApiModel.getPassword()));
+        BeanUtils.copyProperties(userIdentityApiModel, toRegister, "password");
+
+        entity = userRepository.save(toRegister);
         log.info("saved user with id: {} ", entity.getId());
         return map(entity);
     }
 
     @Override
+    @Transactional
     public UserIdentity delete(final Long id) throws UserNotExistException {
         log.info("deleting user");
 
